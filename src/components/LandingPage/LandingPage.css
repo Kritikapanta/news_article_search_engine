@@ -1,0 +1,170 @@
+@import url('https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Archivo+Black&display=swap');
+
+.landing-page {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  background-color: #ffffff;
+}
+
+/* Hero background with transparency */
+.hero-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100vh;
+  z-index: 1;
+  margin-top: 150px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.background-image {
+  width: 60%;
+  max-width: 800px;
+  height: auto;
+  object-fit: contain;
+  opacity: 0.2;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(253, 252, 252, 0.618);
+}
+
+/* Search section */
+.search-container {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 120vh;
+  padding: 2rem 1rem;
+}
+
+.search-section {
+  width: 100%;
+  max-width: 700px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Small temple image below search bar */
+.small-image-container {
+  width: 50%;
+  max-width: 550px;
+  margin-top: -25px;
+  display: flex;
+  justify-content: center;
+}
+
+.small-image {
+  width: 50%;
+  max-width: 350px;
+  height: auto;
+  display: block;
+}
+
+/* NYAT-Search text */
+.nyat-search-text {
+  margin-top: -125px;
+  text-align: center;
+  position: relative;
+  z-index: 3;
+}
+
+.nyat-search-text h1 {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 4rem;
+  font-weight: 900;
+  color: #024ce5;
+  margin: 0;
+  text-shadow: 0 4px 8px rgba(0, 102, 255, 0.3);
+  letter-spacing: 4px;
+}
+
+/* Responsive design */
+@media (max-width: 968px) {
+  .background-image {
+    width: 70%;
+  }
+  
+  .small-image-container {
+    max-width: 450px;
+    margin-top: 40px;
+  }
+  
+  .small-image {
+    width: 50%;
+  }
+  
+  .nyat-search-text h1 {
+    font-size: 3.2rem;
+    letter-spacing: 3px;
+  }
+  
+  .nyat-search-text {
+    margin-top: -25px;
+  }
+}
+
+@media (max-width: 768px) {
+  .background-image {
+    width: 80%;
+  }
+  
+  .search-section {
+    max-width: 90%;
+  }
+  
+  .small-image-container {
+    max-width: 400px;
+    margin-top: 35px;
+  }
+  
+  .small-image {
+    width: 55%;
+  }
+  
+  .nyat-search-text h1 {
+    font-size: 2.5rem;
+    letter-spacing: 2px;
+  }
+  
+  .nyat-search-text {
+    margin-top: -20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .background-image {
+    width: 90%;
+  }
+  
+  .nyat-search-text h1 {
+    font-size: 2rem;
+    letter-spacing: 1px;
+  }
+  
+  .small-image-container {
+    max-width: 300px;
+    margin-top: 30px;
+  }
+  
+  .small-image {
+    width: 60%;
+  }
+  
+  .nyat-search-text {
+    margin-top: -15px;
+  }
+}

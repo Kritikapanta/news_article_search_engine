@@ -1,0 +1,75 @@
+.header {
+  background-color: white;
+  padding: 1rem 0;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.header-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.logo {
+  height: 80px;
+  width: 80px;
+  object-fit: contain;
+}
+
+.right-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.nav-icon, .user-profile {
+  background: none;
+  border: none;
+  cursor: pointer;
+
+  padding: 0.5rem;
+}
+
+.home-icon {
+  font-size: 1rem;
+  color: rgb(60, 63, 201);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.profile-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #ddd;
+}
+
+.person-icon {
+  font-size: 1.25rem;
+}
+
+@media (max-width: 768px) {
+  .header-container {
+    padding: 0 1rem;
+  }
+  
+  .logo-text h1 {
+    font-size: 1.25rem;
+  }
+  
+  .logo-text p {
+    font-size: 0.75rem;
+  }
+}

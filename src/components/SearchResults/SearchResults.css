@@ -1,0 +1,138 @@
+.search-results {
+  padding: 2rem 0;
+}
+
+.results-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #ecf0f1;
+}
+
+.results-header h2 {
+  font-size: 1.75rem;
+  color: #2c3e50;
+  margin: 0 0 0.5rem 0;
+}
+
+.results-count {
+  color: #7f8c8d;
+  font-size: 0.875rem;
+}
+
+.results-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.result-card {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.result-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.result-source {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.875rem;
+}
+
+.source-name {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.gov-badge {
+  background-color: #e8f4fc;
+  color: #2980b9;
+  padding: 0.125rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.result-date {
+  color: #7f8c8d;
+  margin-left: auto;
+}
+
+.result-title {
+  margin: 0 0 0.75rem 0;
+  font-size: 1.25rem;
+}
+
+.result-title a {
+  color: #3498db;
+  text-decoration: none;
+}
+
+.result-title a:hover {
+  text-decoration: underline;
+}
+
+.result-url {
+  margin-bottom: 1rem;
+}
+
+.result-url a {
+  color: #27ae60;
+  font-size: 0.875rem;
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.result-url a:hover {
+  text-decoration: underline;
+}
+
+.result-snippet {
+  color: #34495e;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.result-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 1px solid #ecf0f1;
+  font-size: 0.875rem;
+}
+
+.read-time {
+  color: #7f8c8d;
+}
+
+.result-sections {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.section-tag {
+  background-color: #f8f9fa;
+  color: #6c757d;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+}
+
+.no-results {
+  text-align: center;
+  padding: 4rem 1rem;
+  color: #7f8c8d;
+}
+
+.no-results p {
+  font-size: 1.125rem;
+}
