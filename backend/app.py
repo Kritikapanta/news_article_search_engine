@@ -9,10 +9,10 @@ from datetime import datetime, timezone
 from urllib.parse import quote_plus
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for React frontend
+CORS(app)
 
 # =========================
-# CONFIG (Same as your original)
+# CONFIG (MATCH ORIGINAL)
 # =========================
 NEWS_API_KEY = "12ad376c3d5c4134b493484d2711eb14"
 ARTICLES_PER_QUERY = 50
@@ -36,34 +36,30 @@ LOCAL_KEYWORDS = [
 ]
 
 # =========================
-# UTILITIES (Same as your original)
+# UTILITIES (UNCHANGED)
 # =========================
 def preprocess(text):
     return re.findall(r"\b\w+\b", str(text).lower())
 
 def is_local_query(query):
-    q = query.lower()
-    return any(k in q for k in LOCAL_KEYWORDS)
+    return any(k in query.lower() for k in LOCAL_KEYWORDS)
 
 def time_decay(published_at, rate=0.04):
     try:
-        if published_at:
-            t = datetime.fromisoformat(published_at.replace("Z", "+00:00"))
-            age = (datetime.now(timezone.utc) - t).total_seconds() / 3600
-            return np.exp(-rate * age)
+        t = datetime.fromisoformat(published_at.replace("Z", "+00:00"))
+        age = (datetime.now(timezone.utc) - t).total_seconds() / 3600
+        return np.exp(-rate * age)
     except:
-        pass
-    return 1.0
+        return 1.0
 
 def source_boost(source, local_query):
     source = (source or "").lower()
-
     if any(site in source for site in NEPALI_SITES):
         return 1.25 if local_query else 0.9
     return 1.0
 
 # =========================
-# FETCH NEWS FUNCTIONS (Same as your original)
+# FETCH NEWS (UNCHANGED)
 # =========================
 def fetch_international_news(query):
     url = "https://newsapi.org/v2/everything"
@@ -75,11 +71,7 @@ def fetch_international_news(query):
         "apiKey": NEWS_API_KEY
     }
 
-    try:
-        data = requests.get(url, params=params).json()
-    except:
-        return {}, {}
-
+    data = requests.get(url, params=params).json()
     docs, meta = {}, {}
     idx = 0
 
@@ -110,11 +102,7 @@ def fetch_nepal_news(query):
             f"q={encoded}+site:{site}&hl=en-NP&gl=NP&ceid=NP:en"
         )
 
-        try:
-            feed = feedparser.parse(rss)
-        except:
-            continue
-
+        feed = feedparser.parse(rss)
         for e in feed.entries:
             text = (e.get("title", "") + " " + e.get("summary", "")).strip()
             if not text:
@@ -131,6 +119,9 @@ def fetch_nepal_news(query):
 
     return docs, meta
 
+# =========================
+# BM25 (UNCHANGED)
+# =========================
 def build_index(docs):
     index = defaultdict(list)
     lengths = {}
@@ -169,89 +160,60 @@ def bm25(query, index, lengths, avg_dl):
     return scores
 
 # =========================
-# API ENDPOINTS
+# API (MATCHES ORIGINAL SEARCH)
 # =========================
-@app.route('/api/search', methods=['GET'])
-def search():
-    query = request.args.get('q', '')
+@app.route("/api/search")
+def api_search():
+    query = request.args.get("q", "")
+    page = int(request.args.get("page", 1))
+
     if not query:
-        return jsonify({"error": "No query provided", "results": []})
-    
-    try:
-        local_query = is_local_query(query)
+        return jsonify({"results": [], "total": 0})
 
-        docs, meta = fetch_international_news(query)
+    local_query = is_local_query(query)
+    docs, meta = fetch_international_news(query)
 
-        if local_query:
-            np_docs, np_meta = fetch_nepal_news(query)
-            offset = len(docs)
-            docs.update({k + offset: v for k, v in np_docs.items()})
-            meta.update({k + offset: v for k, v in np_meta.items()})
+    if local_query:
+        np_docs, np_meta = fetch_nepal_news(query)
+        offset = len(docs)
+        docs.update({k + offset: v for k, v in np_docs.items()})
+        meta.update({k + offset: v for k, v in np_meta.items()})
 
-        if not docs:
-            return jsonify({"results": [], "query": query})
+    index, lengths, avg_dl = build_index(docs)
+    bm25_scores = bm25(query, index, lengths, avg_dl)
 
-        index, lengths, avg_dl = build_index(docs)
-        bm25_scores = bm25(query, index, lengths, avg_dl)
+    # EXACT SAME FINAL SCORE LOGIC
+    final_scores = {}
+    for d in docs:
+        score = bm25_scores.get(d, 0)
+        decay = time_decay(meta[d]["publishedAt"])
+        boost = source_boost(meta[d]["source"], local_query)
+        final_scores[d] = boost * (0.7 * score + 0.3 * decay)
 
-        final_scores = {}
-        for d in docs:
-            score = bm25_scores.get(d, 0)
-            decay = time_decay(meta[d]["publishedAt"])
-            boost = source_boost(meta[d]["source"], local_query)
-            final_scores[d] = boost * (0.7 * score + 0.3 * decay)
+    ranked = sorted(final_scores.items(), key=lambda x: x[1], reverse=True)
 
-        ranked = sorted(final_scores.items(), key=lambda x: x[1], reverse=True)
+    total = len(ranked)
+    start = (page - 1) * RESULTS_PER_PAGE
+    end = start + RESULTS_PER_PAGE
 
-        # Format results for frontend
-        results = []
-        for doc_id, score in ranked[:RESULTS_PER_PAGE]:
-            item = meta[doc_id]
-            
-            # Determine if it's a .gov site
-            is_gov = '.gov' in (item.get('source') or '') or '.gov' in (item.get('url') or '')
-            
-            # Format date
-            date_str = "Unknown date"
-            if item.get("publishedAt"):
-                try:
-                    dt = datetime.fromisoformat(item["publishedAt"].replace("Z", "+00:00"))
-                    date_str = dt.strftime("%b %d, %Y")
-                except:
-                    date_str = item["publishedAt"][:10] if len(item["publishedAt"]) >= 10 else "Recent"
-            
-            # Create snippet from content
-            snippet = (item.get('title') or '')[:150] + "..."
-            
-            # Estimate read time
-            word_count = len((item.get('title') or '').split())
-            read_time = f"{max(1, word_count // 200)} min read"
-            
-            results.append({
-                "title": item.get("title", "No title"),
-                "url": item.get("url", "#"),
-                "source": item.get("source", "Unknown source"),
-                "date": date_str,
-                "snippet": snippet,
-                "readTime": read_time,
-                "isGov": is_gov,
-                "score": score,
-                "sections": []  # You can add sections if available
-            })
-
-        return jsonify({
-            "query": query,
-            "results": results,
-            "total": len(ranked)
+    results = []
+    for doc_id, score in ranked[start:end]:
+        item = meta[doc_id]
+        results.append({
+            "title": item["title"],
+            "url": item["url"],
+            "source": item["source"],
+            "publishedAt": item["publishedAt"],
+            "score": score
         })
-        
-    except Exception as e:
-        print(f"Search error: {str(e)}")
-        return jsonify({"error": str(e), "results": []})
 
-@app.route('/api/health', methods=['GET'])
-def health():
-    return jsonify({"status": "healthy"})
+    return jsonify({
+        "query": query,
+        "results": results,
+        "total": total,
+        "page": page,
+        "total_pages": (total + RESULTS_PER_PAGE - 1) // RESULTS_PER_PAGE
+    })
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(port=5000, debug=True)

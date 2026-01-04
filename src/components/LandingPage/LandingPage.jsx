@@ -39,7 +39,7 @@ function LandingPage({ onSearch }) {
           
           {/* NYAT-Search text */}
           <div className="nyat-search-text">
-            <h1>NYAT-Search</h1>
+            <h1>NYAT-NEWS SEARCH</h1>
           </div>
         </div>
       </div>

@@ -1,0 +1,30 @@
+# Ignore Python cache and compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Ignore virtual environment
+news/
+
+# Ignore environment/IDE files
+.env
+*.env
+*.venv
+*.egg-info/
+
+# Ignore logs
+*.log
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore Python bytecode in any folder
+**/__pycache__/
+
+# Ignore pyinstaller builds (if any)
+dist/
+build/
+
+# Ignore VSCode workspace settings (optional)
+.vscode/
